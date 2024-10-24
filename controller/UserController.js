@@ -44,28 +44,32 @@ exports.adminRegister = async (req, res) => {
 
 
 exports.candidateRegister = async (req, res) => {
-    const{fullName, userSex, userEmail, userPassword, userPostalCode, userJobTitle, userCity, userDob, userNumber, userAddress, userEducLvl} =  req.body;
+  const { fullName, sex, email, password, postalCode, jobTitle, city, dob, mobile, address, educationLevel } = req.body;
 
-    try {
-        const hashPass = await bcrypt.hash(userPassword, 10);
+  try {
+      const hashPass = await bcrypt.hash(password, 10);
 
-        const insertCandidate = await pool.execute("INSERT INTO tbl_candidate (user_fullname, user_sex, user_email, user_number, user_address, user_city, user_educ_lvl, user_job_title, user_postal_code, user_dob, user_password) VALUES(?,?,?,?,?,?,?,?,?,?,?)",[fullName, userSex, userEmail, userNumber, userAddress, userCity,userEducLvl ,userJobTitle,userPostalCode,userDob, hashPass]);
+      // Make sure the columns in the query match the ones in your database
+      const insertCandidate = await pool.execute(
+          `INSERT INTO tbl_candidate 
+          (user_fullname, user_sex, user_email, user_number, user_address, user_city, 
+          user_educ_lvl, user_job_title, user_postal_code, user_dob, user_password) 
+          VALUES(?,?,?,?,?,?,?,?,?,?,?)`, 
+          [fullName, sex, email, mobile, address, city, educationLevel, jobTitle, postalCode, dob, hashPass]
+      );
 
-        if (insertCandidate) 
-        {
-            console.log("Registered Successfully");
-            res.status(201).json({message: "Registered Successfully"});
-        }
-
-        else {
-            console.log("failed to insert");
-            res.status(201).json({message: "failed to insert"});
-        }
-    }catch (error) {
-        console.log("server error");
-        res.status(500).json({message: "Server Error"});
-    }
-}
+      if (insertCandidate) {
+          console.log("Registered Successfully");
+          res.status(201).json({ message: "Registered Successfully" });
+      } else {
+          console.log("Failed to insert");
+          res.status(400).json({ message: "Failed to insert" });
+      }
+  } catch (error) {
+      console.log("Server error", error);
+      res.status(500).json({ message: "Server Error" });
+  }
+};
 
 
 
@@ -73,7 +77,7 @@ exports.candidateLogin = async(req,res) => {
     const {email, password} = req.body;
 
     try{
-        const [checking] = await pool.execute("SELECT * FROM tbl_candidate WHERE email = ?",[email]);
+        const [checking] = await pool.execute("SELECT * FROM tbl_candidate WHERE user_email = ?",[email]);
 
         if(checking.length === 0 ){
            return res.status(201).json({message: "Email doesn't exist"});
