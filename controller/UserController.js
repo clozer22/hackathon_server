@@ -144,7 +144,7 @@ exports.generateQuestions = async (req, res) => {
     const { jobRole, candidateId } = req.params;
     try {
       console.log(jobRole);
-      const prompt = `Generate 5 interview questions for a candidate applying for a ${jobRole} position. PS: generate questions only.`;
+      const prompt = `Generate 5 interview questions for a candidate applying for a ${jobRole} position. PS: generate the 5 questions only. Dont't send any unecessary text, just the 5 questions only.`;
   
       const result = await model.generateContent(prompt);
   
@@ -282,7 +282,7 @@ exports.generateQuestions = async (req, res) => {
     try{
         const [check] = await pool.execute("SELECT * FROM tbl_add_job WHERE job_role = ?",[jobRole]);
 
-        if(check.length === 0){
+        if(check.length > 0){
             return res.status(201).json({message: "role is already exist"});
         }
 
