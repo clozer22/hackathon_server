@@ -33,7 +33,7 @@ app.post('/register', userController.adminRegister);
 
 app.post('/candidateRegister', userController.candidateRegister);
 
-app.get('/candidateLogin', userController.candidateLogin);
+app.post('/candidateLogin', userController.candidateLogin);
 
 // Start server
 app.listen(PORT, () => {

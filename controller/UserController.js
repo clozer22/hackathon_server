@@ -41,7 +41,7 @@ exports.adminRegister = async (req, res) => {
 
 
 exports.candidateRegister = async (req, res) => {
-    const{firstName, lastName, email, password, contact, status} = await req.body;
+    const{firstName, lastName, email, password, contact, status} =  req.body;
 
     try {
         const hashPass = await bcrypt.hash(password, 10);
@@ -51,65 +51,44 @@ exports.candidateRegister = async (req, res) => {
         if (insertCandidate) 
         {
             console.log("Registered Successfully");
-            req.status(201).json({message: "Registered Successfully"});
+            res.status(201).json({message: "Registered Successfully"});
         }
 
         else {
             console.log("failed to insert");
-            req.status(201).json({message: "failed to insert"});
+            res.status(201).json({message: "failed to insert"});
         }
     }catch (error) {
         console.log("server error");
-        req.status(500).json({message: "Server Error"});
+        res.status(500).json({message: "Server Error"});
     }
 }
 
-exports.candidateLogin = async(req, res) => {
-    const{email, password} = req.body;
 
-    try {
-        const [getEmail] = await pool.execute("SELECT * FROM tbl_candidate WHERE email = '?'",[email]);
 
-        if (getEmail.length > 0)
-        {
-            const pass = getEmail[0].password;
+exports.candidateLogin = async(req,res) => {
+    const {email, password} = req.body;
 
-            bcrypt.compare(pass, password, async function(err, result){
-                if (err)
-                {
-                    console.error("Error comparing password");
-                    return;
-                }
+    try{
+        const [checking] = await pool.execute("SELECT * FROM tbl_candidate WHERE email = ?",[email]);
 
-                if (result)
-                {
-                    const getLogin = await pool.execute("SELECT * FROM tbl_candidate WHERE email = '?' and password = '?'",[email, password]);
-
-                    if (getLogin)
-                    {
-                        console.log("Login Successful");
-                        req.status(201).json({message: "Login Successful"});
-                    }
-
-                    else {
-                        console.log("Invalid Password");
-                        req.status(201).json({message: "Invalid Password"});
-                    }
-                }
-
-                else {
-                    console.log("Password not match");
-                }
-            })
+        if(checking.length === 0 ){
+           return res.status(201).json({message: "Email doesn't exist"});
         }
 
-        else {
-            console.log("Invalid Email");
-            req.status(201).json({message: "Invalid Email"});
+        const hashedPassword = checking[0].password;
+
+        const isPasswordMatched = await bcrypt.compare(password, hashedPassword);
+        
+        if(!isPasswordMatched){
+            console.log("mali ang password");
+            return res.status(201).json({message: "Password does not match"});
         }
 
-    }catch(error) {
-        console.log("Server Error");
-        req.status(500).json({message: "Server Error"});
+        res.status(201).json({message: "Login Successfully"});
+
+    }catch(error){
+        console.log(error);
+        res.status(500).json({message: "server error"});
     }
 }
