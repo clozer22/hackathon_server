@@ -29,11 +29,14 @@ app.use(express.json());
 // })();
 
 
-app.post('/register', userController.adminRegister);
+app.post('/adminRegister', userController.adminRegister);
 
 app.post('/candidateRegister', userController.candidateRegister);
 
 app.post('/candidateLogin', userController.candidateLogin);
+app.get('/api/generate-questions/:jobRole/:candidateId', userController.generateQuestions);
+app.get('/api/getGeneratedQuestions/:candidateId', userController.fetchGeneratedQuestions);
+app.post('/api/submitAnswer/', userController.submitAnswer);
 
 // Start server
 app.listen(PORT, () => {
