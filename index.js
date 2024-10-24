@@ -39,7 +39,7 @@ app.get('/api/generate-questions/:jobRole/:candidateId', userController.generate
 app.get('/api/getGeneratedQuestions/:candidateId', userController.fetchGeneratedQuestions);
 app.post('/api/submitAnswer/', userController.submitAnswer);
 app.post('/api/addRole', userController.candidateAddJob)
-app.get('/api/getListOfRoles', userController.candidateListOfRoles);
+app.get('/api/getListOfRoles/:candidateId', userController.candidateListOfRoles);
 
 // Start server
 app.listen(PORT, () => {
