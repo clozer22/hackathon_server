@@ -44,12 +44,12 @@ exports.adminRegister = async (req, res) => {
 
 
 exports.candidateRegister = async (req, res) => {
-    const{firstName, lastName, email, password, contact, status} =  req.body;
+    const{fullName, userSex, userEmail, userPassword, userPostalCode, userJobTitle, userCity, userDob, userNumber, userAddress, userEducLvl} =  req.body;
 
     try {
-        const hashPass = await bcrypt.hash(password, 10);
+        const hashPass = await bcrypt.hash(userPassword, 10);
 
-        const insertCandidate = await pool.execute("INSERT INTO tbl_candidate(first_name, last_name, email, password, contact, status) VALUES(?,?,?,?,?)",[firstName, lastName, email, hashPass, contact, status]);
+        const insertCandidate = await pool.execute("INSERT INTO tbl_candidate (user_fullname, user_sex, user_email, user_number, user_address, user_city, user_educ_lvl, user_job_title, user_postal_code, user_dob, user_password) VALUES(?,?,?,?,?,?,?,?,?,?,?)",[fullName, userSex, userEmail, userNumber, userAddress, userCity,userEducLvl ,userJobTitle,userPostalCode,userDob, hashPass]);
 
         if (insertCandidate) 
         {
