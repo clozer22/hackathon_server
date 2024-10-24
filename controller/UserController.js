@@ -44,11 +44,16 @@ exports.adminRegister = async (req, res) => {
 
 
 exports.candidateRegister = async (req, res) => {
+<<<<<<< HEAD
   const { fullName, sex, email, password, postalCode, jobTitle, city, dob, mobile, address, educationLevel } = req.body;
+=======
+    const{fullName, userSex, userEmail, userPassword, userPostalCode, userJobTitle, userCity, userDob, userNumber, userAddress, userEducLvl, userSalary} =  req.body;
+>>>>>>> 6075bcda9009c1989e25ac44259c2f3af8537bb0
 
   try {
       const hashPass = await bcrypt.hash(password, 10);
 
+<<<<<<< HEAD
       // Make sure the columns in the query match the ones in your database
       const insertCandidate = await pool.execute(
           `INSERT INTO tbl_candidate 
@@ -57,6 +62,9 @@ exports.candidateRegister = async (req, res) => {
           VALUES(?,?,?,?,?,?,?,?,?,?,?)`, 
           [fullName, sex, email, mobile, address, city, educationLevel, jobTitle, postalCode, dob, hashPass]
       );
+=======
+        const insertCandidate = await pool.execute("INSERT INTO tbl_candidate (user_fullname, user_sex, user_email, user_number, user_address, user_city, user_educ_lvl, user_job_title, user_postal_code, user_dob, user_password, user_salary) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",[fullName, userSex, userEmail, userNumber, userAddress, userCity,userEducLvl ,userJobTitle,userPostalCode,userDob, hashPass,userSalary]);
+>>>>>>> 6075bcda9009c1989e25ac44259c2f3af8537bb0
 
       if (insertCandidate) {
           console.log("Registered Successfully");
