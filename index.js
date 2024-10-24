@@ -30,6 +30,7 @@ app.use(express.json());
 
 
 app.post('/adminRegister', userController.adminRegister);
+app.post('/adminLogin', userController.adminLogin);
 
 app.post('/candidateRegister', userController.candidateRegister);
 
