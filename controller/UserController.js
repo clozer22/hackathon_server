@@ -312,7 +312,7 @@ exports.candidateListOfRoles = async(req,res) => {
             return res.status(200).json({message: "No list"});
         }
 
-        res.status(200).json({message: "fetched"});
+        res.status(200).json({message: "fetched", jobs: fetch});
 
     }catch(e){
         console.log(e)
