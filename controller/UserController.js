@@ -44,16 +44,11 @@ exports.adminRegister = async (req, res) => {
 
 
 exports.candidateRegister = async (req, res) => {
-<<<<<<< HEAD
   const { fullName, sex, email, password, postalCode, jobTitle, city, dob, mobile, address, educationLevel } = req.body;
-=======
-    const{fullName, userSex, userEmail, userPassword, userPostalCode, userJobTitle, userCity, userDob, userNumber, userAddress, userEducLvl, userSalary} =  req.body;
->>>>>>> 6075bcda9009c1989e25ac44259c2f3af8537bb0
 
   try {
       const hashPass = await bcrypt.hash(password, 10);
 
-<<<<<<< HEAD
       // Make sure the columns in the query match the ones in your database
       const insertCandidate = await pool.execute(
           `INSERT INTO tbl_candidate 
@@ -62,9 +57,6 @@ exports.candidateRegister = async (req, res) => {
           VALUES(?,?,?,?,?,?,?,?,?,?,?)`, 
           [fullName, sex, email, mobile, address, city, educationLevel, jobTitle, postalCode, dob, hashPass]
       );
-=======
-        const insertCandidate = await pool.execute("INSERT INTO tbl_candidate (user_fullname, user_sex, user_email, user_number, user_address, user_city, user_educ_lvl, user_job_title, user_postal_code, user_dob, user_password, user_salary) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",[fullName, userSex, userEmail, userNumber, userAddress, userCity,userEducLvl ,userJobTitle,userPostalCode,userDob, hashPass,userSalary]);
->>>>>>> 6075bcda9009c1989e25ac44259c2f3af8537bb0
 
       if (insertCandidate) {
           console.log("Registered Successfully");
@@ -81,32 +73,45 @@ exports.candidateRegister = async (req, res) => {
 
 
 
-exports.candidateLogin = async(req,res) => {
-    const {email, password} = req.body;
+exports.candidateLogin = async (req, res) => {
+    const { email, password } = req.body;
 
-    try{
-        const [checking] = await pool.execute("SELECT * FROM tbl_candidate WHERE user_email = ?",[email]);
+    // Log the password and email to check if they are correctly sent
+    console.log("Received email:", email);
+    console.log("Received password:", password);
 
-        if(checking.length === 0 ){
-           return res.status(201).json({message: "Email doesn't exist"});
+    try {
+        const [checking] = await pool.execute("SELECT * FROM tbl_candidate WHERE user_email = ?", [email]);
+
+        if (checking.length === 0) {
+            return res.status(201).json({ message: "Email doesn't exist" });
         }
 
-        const hashedPassword = checking[0].password;
+        const hashedPassword = checking[0].user_password;
 
+        // Log the hashedPassword to ensure it's correctly fetched
+        console.log("Fetched hashedPassword:", hashedPassword);
+
+        // Check if the hashedPassword or password is undefined
+        if (!hashedPassword || !password) {
+            return res.status(400).json({ message: "Password or hashed password is missing" });
+        }
+
+        // Compare the passwords
         const isPasswordMatched = await bcrypt.compare(password, hashedPassword);
-        
-        if(!isPasswordMatched){
-            console.log("mali ang password");
-            return res.status(201).json({message: "Password does not match"});
+
+        if (!isPasswordMatched) {
+            console.log("Incorrect password");
+            return res.status(201).json({ message: "Password does not match" });
         }
 
-        res.status(201).json({message: "Login Successfully"});
+        res.status(201).json({ message: "Login Successfully" });
 
-    }catch(error){
-        console.log(error);
-        res.status(500).json({message: "server error"});
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(500).json({ message: "server error" });
     }
-}
+};
 
 
 exports.adminLogin = async(req,res) => {
@@ -269,5 +274,30 @@ exports.generateQuestions = async (req, res) => {
     }
   };
   
+
+
+  exports.candidateAddJob = async(req,res) => {
+    const {jobRole} = req.body;
+    const candidateId = 1;
+    try{
+        const [check] = await pool.execute("SELECT * FROM tbl_add_job WHERE job_role = ?",[jobRole]);
+
+        if(check.length === 0){
+            return res.status(201).json({message: "role is already exist"});
+        }
+
+        const insert = await pool.execute("INSERT INTO tbl_add_job (job_role, candidate_id) VALUES (?,?)",[jobRole,candidateId]);
+
+        if(!insert){
+            return res.status(200).json({message: "failed to insert job role"});
+        }
+
+        res.status(200).json({message: "role inserted"});
+        
+    }catch(e){
+        console.log(e)
+        res.status(500).json({message: "server error"});
+    }
+  }
   
   
