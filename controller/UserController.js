@@ -293,11 +293,31 @@ exports.generateQuestions = async (req, res) => {
         }
 
         res.status(200).json({message: "role inserted"});
-        
+
     }catch(e){
         console.log(e)
         res.status(500).json({message: "server error"});
     }
   }
+
+
+exports.candidateListOfRoles = async(req,res) => {
+    const {candidateId} = req.params;
+
+    try{
+
+        const [fetch] = await pool.execute("SELECT * FROM tbl_add_job WHERE candidate_id = ?",[candidateId]);
+
+        if(fetch.length === 0){
+            return res.status(200).json({message: "No list"});
+        }
+
+        res.status(200).json({message: "fetched"});
+
+    }catch(e){
+        console.log(e)
+        res.status(200).json({message: "server error"});
+    }
+}
   
   
