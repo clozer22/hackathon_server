@@ -38,6 +38,7 @@ app.post('/candidateLogin', userController.candidateLogin);
 app.get('/api/generate-questions/:jobRole/:candidateId', userController.generateQuestions);
 app.get('/api/getGeneratedQuestions/:candidateId', userController.fetchGeneratedQuestions);
 app.post('/api/submitAnswer/', userController.submitAnswer);
+app.post('/api/addRole', userController.candidateAddJob)
 
 // Start server
 app.listen(PORT, () => {
