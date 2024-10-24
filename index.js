@@ -5,7 +5,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 const bcrypt = require('bcryptjs');
-const userContoller = require('./controller/UserController');
+const userController = require('./controller/UserController');
 
 app.use(
   cors({
@@ -29,11 +29,11 @@ app.use(express.json());
 // })();
 
 
-app.post('/register', userContoller.adminRegister);
+app.post('/register', userController.adminRegister);
 
+app.post('/candidateRegister', userController.candidateRegister);
 
-
-
+app.get('/candidateLogin', userController.candidateLogin);
 
 // Start server
 app.listen(PORT, () => {
